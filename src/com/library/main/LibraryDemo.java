@@ -62,13 +62,13 @@ public class LibraryDemo {
     private static void displayMenu() {
         System.out.println("\n===== HỆ THỐNG THƯ VIỆN =====");
         if (currentUser != null) {
-            System.out.println("Xin chào: " + currentUser.getFullName() + " (" + currentUser.getRole() + ")");
+            System.out.println("Xin chào: " + currentUser.getFullName());
         }
         System.out.println("1. ĐĂNG NHẬP");
         System.out.println("2. ĐĂNG XUẤT");
         System.out.println("3. ĐĂNG KÍ THÀNH VIÊN MỚI");
         System.out.println("4. QUẢN LÝ THÔNG TIN CÁ NHÂN");
-        System.out.println("5. QUẢN LÝ THƯ VIỆN (ADMIN)");
+        System.out.println("5. QUẢN LÝ THƯ VIỆN ");
         System.out.println("6. TÌM KIẾM SÁCH");
         System.out.println("7. XEM DANH SÁCH SÁCH");
         System.out.println("8. THOÁT");
@@ -163,7 +163,8 @@ public class LibraryDemo {
                 System.out.print("Chọn: ");
                 String adminChoice = scanner.nextLine();
 
-                if (adminChoice.equals("3")) break;
+                if (adminChoice.equals("3"))
+                    break;
 
                 switch (adminChoice) {
                     case "1":
@@ -182,7 +183,8 @@ public class LibraryDemo {
                     default:
                         System.out.println("Lựa chọn không hợp lệ!");
                 }
-                if (adminChoice.equals("3")) break;
+                if (adminChoice.equals("3"))
+                    break;
             }
         } else {
             // Menu cho Reader
@@ -194,7 +196,8 @@ public class LibraryDemo {
                 System.out.print("Chọn: ");
                 String readerChoice = scanner.nextLine();
 
-                if (readerChoice.equals("3")) break;
+                if (readerChoice.equals("3"))
+                    break;
 
                 switch (readerChoice) {
                     case "1":
@@ -209,7 +212,7 @@ public class LibraryDemo {
                         String newEmail = scanner.nextLine();
                         System.out.print("CẬP NHẬT MÃ THẺ THƯ VIỆN MỚI: ");
                         String newCard = scanner.nextLine();
-                        
+
                         currentUser.updateProfile(newAddress, newPhone, newEmail, newCard);
                         try {
                             memberDAO.updateMember(currentUser);
@@ -231,13 +234,13 @@ public class LibraryDemo {
         }
 
         while (true) {
-            System.out.println("\n--- QUẢN LÝ THƯ VIỆN (ADMIN) ---");
+            System.out.println("\n--- QUẢN LÝ THƯ VIỆN ---");
             System.out.println("1. Thêm sách");
             System.out.println("2. Xóa sách (theo mã)");
             System.out.println("3. Xóa TOÀN BỘ sách");
             System.out.println("4. Sửa thông tin sách");
             System.out.println("5. Xem danh sách thành viên");
-            System.out.println("6. Xóa thành viên (theo username)");
+            System.out.println("6. Xóa thành viên ");
             System.out.println("7. Xóa TOÀN BỘ thành viên");
             System.out.println("8. Quay lại");
             System.out.print("Chọn: ");
