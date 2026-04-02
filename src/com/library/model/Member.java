@@ -55,4 +55,12 @@ public class Member extends Account {
         System.out.println("Email: " + email);
         System.out.println("Mã thẻ thư viện: " + libraryCardId);
     }
+
+    public void updateProfile(String address, String phone, String email, String libraryCardId) {
+        this.address = address;
+        this.phone = phone;
+        this.email = email;
+        this.libraryCardId = libraryCardId;
+        System.out.println("Thông tin cá nhân được cập nhật!");
+    }
 }

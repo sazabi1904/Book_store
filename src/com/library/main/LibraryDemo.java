@@ -88,12 +88,12 @@ public class LibraryDemo {
             Member member = memberDAO.login(user, pass);
             if (member != null) {
                 currentUser = member;
-                System.out.println("Đăng nhập thành công! Chào mừng " + currentUser.getFullName());
+                System.out.println("Đăng nhập thành công! Xin chào " + currentUser.getUsername());
             } else if (user.equals("admin") && pass.equals("123")) {
                 currentUser = new Member("admin", "123", "Quản trị viên", "", "Khác", "", "", "", "ADMIN-DEF");
                 System.out.println("Đăng nhập ADMIN mặc định thành công!");
             } else {
-                System.out.println("Sai tài khoản hoặc mật khẩu!");
+                System.out.println("Sai tên đăng nhập hoặc mật khẩu! Vui lòng thử lại.");
             }
         } catch (SQLException e) {
             System.out.println("Lỗi database: " + e.getMessage());
@@ -101,32 +101,39 @@ public class LibraryDemo {
     }
 
     private static void logout() {
-        if (currentUser == null) {
-            System.out.println("Bạn chưa đăng nhập!");
-        } else {
+        if (currentUser != null) {
+            System.out.println("ĐÃ ĐĂNG XUẤT THÀNH CÔNG! TẠM BIỆT " + currentUser.getUsername());
             currentUser = null;
-            System.out.println("Đã đăng xuất.");
+        } else {
+            System.out.println("CHƯA CÓ NGƯỜI DÙNG NÀO ĐĂNG NHẬP!");
         }
     }
 
     private static void register() {
         System.out.println("--- Đăng ký thành viên mới ---");
-        System.out.print("Username: ");
+        System.out.print("TÊN ĐĂNG NHẬP: ");
         String user = scanner.nextLine();
-        System.out.print("Password: ");
+        System.out.print("MẬT KHẨU: ");
         String pass = scanner.nextLine();
-        System.out.print("Họ tên: ");
+        System.out.print("HỌ VÀ TÊN: ");
         String name = scanner.nextLine();
-        System.out.print("Số điện thoại: ");
+        System.out.print("NGÀY SINH: ");
+        String birth = scanner.nextLine();
+        System.out.print("GIỚI TÍNH: ");
+        String gender = scanner.nextLine();
+        System.out.print("ĐỊA CHỈ: ");
+        String address = scanner.nextLine();
+        System.out.print("SỐ ĐIỆN THOẠI: ");
         String phone = scanner.nextLine();
-        System.out.print("Email: ");
+        System.out.print("EMAIL: ");
         String email = scanner.nextLine();
+        System.out.print("MÃ THẺ THƯ VIỆN: ");
+        String card = scanner.nextLine();
 
-        Member m = new Member(user, pass, name, "", "Chưa rõ", "", phone, email,
-                "CARD-" + System.currentTimeMillis() % 10000);
+        Member m = new Member(user, pass, name, birth, gender, address, phone, email, card);
         try {
             memberDAO.addMember(m);
-            System.out.println("Đăng ký thành công!");
+            System.out.println("ĐĂNG KÍ THÀNH VIÊN THÀNH CÔNG!");
         } catch (SQLException e) {
             System.out.println("Lỗi đăng ký: " + e.getMessage());
         }
@@ -142,64 +149,77 @@ public class LibraryDemo {
 
     private static void managePersonalInfo() {
         if (currentUser == null) {
-            System.out.println("Vui lòng đăng nhập trước!");
+            System.out.println("Bạn cần đăng nhập trước!");
             return;
         }
 
-        while (true) {
-            System.out.println("\n--- QUẢN LÝ THÔNG TIN CÁ NHÂN ---");
-            System.out.println("1. Xem hồ sơ");
-            System.out.println("2. Chỉnh sửa thông tin");
-            System.out.println("3. Quay lại");
-            System.out.print("Chọn: ");
-            String choice = scanner.nextLine();
+        if (currentUser.getUsername().equals("admin") || "Quản trị viên".equals(currentUser.getFullName())) {
+            // Menu cho Admin
+            while (true) {
+                System.out.println("=== Quản lý thông tin cá nhân ===");
+                System.out.println("1. Thêm thành viên mới");
+                System.out.println("2. Xóa thành viên");
+                System.out.println("3. Quay lại");
+                System.out.print("Chọn: ");
+                String adminChoice = scanner.nextLine();
 
-            if (choice.equals("3")) {
-                break;
-            } else if (choice.equals("1")) {
-                currentUser.showProfile();
-                System.out.println("Nhấn phím bất kỳ để quay lại...");
-                scanner.nextLine();
-            } else if (choice.equals("2")) {
-                System.out.println("Nhập thông tin mới (để trống nếu không muốn đổi):");
-                System.out.print("Họ tên [" + currentUser.getFullName() + "]: ");
-                String name = scanner.nextLine();
-                if (!name.isEmpty())
-                    currentUser.setFullName(name);
+                if (adminChoice.equals("3")) break;
 
-                System.out.print("Ngày sinh [" + currentUser.getBirthDate() + "]: ");
-                String bdate = scanner.nextLine();
-                if (!bdate.isEmpty())
-                    currentUser.setBirthDate(bdate);
-
-                System.out.print("Giới tính [" + currentUser.getGender() + "]: ");
-                String gender = scanner.nextLine();
-                if (!gender.isEmpty())
-                    currentUser.setGender(gender);
-
-                System.out.print("Địa chỉ [" + currentUser.getAddress() + "]: ");
-                String addr = scanner.nextLine();
-                if (!addr.isEmpty())
-                    currentUser.setAddress(addr);
-
-                System.out.print("Số điện thoại [" + currentUser.getPhone() + "]: ");
-                String phone = scanner.nextLine();
-                if (!phone.isEmpty())
-                    currentUser.setPhone(phone);
-
-                System.out.print("Email [" + currentUser.getEmail() + "]: ");
-                String email = scanner.nextLine();
-                if (!email.isEmpty())
-                    currentUser.setEmail(email);
-
-                try {
-                    memberDAO.updateMember(currentUser);
-                    System.out.println("Cập nhật thông tin thành công!");
-                } catch (SQLException e) {
-                    System.out.println("Lỗi cập nhật: " + e.getMessage());
+                switch (adminChoice) {
+                    case "1":
+                        register();
+                        break;
+                    case "2":
+                        System.out.print("NHẬP TÊN ĐĂNG NHẬP CỦA THÀNH VIÊN CẦN XÓA: ");
+                        String delUser = scanner.nextLine();
+                        try {
+                            memberDAO.deleteMember(delUser);
+                            System.out.println("ĐÃ XÓA THÀNH VIÊN: " + delUser);
+                        } catch (SQLException e) {
+                            System.out.println("Lỗi xóa: " + e.getMessage());
+                        }
+                        break;
+                    default:
+                        System.out.println("Lựa chọn không hợp lệ!");
                 }
-            } else {
-                System.out.println("Lựa chọn không hợp lệ!");
+                if (adminChoice.equals("3")) break;
+            }
+        } else {
+            // Menu cho Reader
+            while (true) {
+                System.out.println("=== Quản lý thông tin cá nhân ===");
+                System.out.println("1. Xem hồ sơ");
+                System.out.println("2. Cập nhật hồ sơ");
+                System.out.println("3. Quay lại");
+                System.out.print("Chọn: ");
+                String readerChoice = scanner.nextLine();
+
+                if (readerChoice.equals("3")) break;
+
+                switch (readerChoice) {
+                    case "1":
+                        currentUser.showProfile();
+                        break;
+                    case "2":
+                        System.out.print("CẬP NHẬT ĐỊA CHỈ MỚI: ");
+                        String newAddress = scanner.nextLine();
+                        System.out.print("CẬP NHẬT SỐ ĐIỆN THOẠI MỚI: ");
+                        String newPhone = scanner.nextLine();
+                        System.out.print("CẬP NHẬT EMAIL MỚI: ");
+                        String newEmail = scanner.nextLine();
+                        System.out.print("CẬP NHẬT MÃ THẺ THƯ VIỆN MỚI: ");
+                        String newCard = scanner.nextLine();
+                        
+                        currentUser.updateProfile(newAddress, newPhone, newEmail, newCard);
+                        try {
+                            memberDAO.updateMember(currentUser);
+                        } catch (SQLException e) {
+                            System.out.println("Lỗi cập nhật DB: " + e.getMessage());
+                        }
+                        break;
+                    default:
+                        System.out.println("Lựa chọn không hợp lệ!");
+                }
             }
         }
     }
