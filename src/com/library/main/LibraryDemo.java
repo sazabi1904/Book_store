@@ -127,8 +127,22 @@ public class LibraryDemo {
         String phone = scanner.nextLine();
         System.out.print("EMAIL: ");
         String email = scanner.nextLine();
+        if (!isValidEmail(email)) {
+            System.out.println("Lỗi: Định dạng Email không hợp lệ (ví dụ: abc@gmail.com)!");
+            return;
+        }
+
         System.out.print("MÃ THẺ THƯ VIỆN: ");
         String card = scanner.nextLine();
+        try {
+            if (memberDAO.isCardIdExists(card)) {
+                System.out.println("Lỗi: Mã thẻ thư viện đã tồn tại trong hệ thống!");
+                return;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi kiểm tra mã thẻ: " + e.getMessage());
+            return;
+        }
 
         Member m = new Member(user, pass, name, birth, gender, address, phone, email, card);
         try {
@@ -157,20 +171,16 @@ public class LibraryDemo {
             // Menu cho Admin
             while (true) {
                 System.out.println("=== Quản lý thông tin cá nhân ===");
-                System.out.println("1. Thêm thành viên mới");
-                System.out.println("2. Xóa thành viên");
-                System.out.println("3. Quay lại");
+                System.out.println("1. Xóa thành viên");
+                System.out.println("2. Quay lại");
                 System.out.print("Chọn: ");
                 String adminChoice = scanner.nextLine();
 
-                if (adminChoice.equals("3"))
+                if (adminChoice.equals("2"))
                     break;
 
                 switch (adminChoice) {
                     case "1":
-                        register();
-                        break;
-                    case "2":
                         System.out.print("NHẬP TÊN ĐĂNG NHẬP CỦA THÀNH VIÊN CẦN XÓA: ");
                         String delUser = scanner.nextLine();
                         try {
@@ -183,8 +193,6 @@ public class LibraryDemo {
                     default:
                         System.out.println("Lựa chọn không hợp lệ!");
                 }
-                if (adminChoice.equals("3"))
-                    break;
             }
         } else {
             // Menu cho Reader
@@ -210,12 +218,34 @@ public class LibraryDemo {
                         String newPhone = scanner.nextLine();
                         System.out.print("CẬP NHẬT EMAIL MỚI: ");
                         String newEmail = scanner.nextLine();
+                        if (!newEmail.isEmpty() && !isValidEmail(newEmail)) {
+                            System.out.println("Lỗi: Định dạng Email không hợp lệ!");
+                            break;
+                        }
                         System.out.print("CẬP NHẬT MÃ THẺ THƯ VIỆN MỚI: ");
                         String newCard = scanner.nextLine();
+                        try {
+                            if (!newCard.isEmpty() && memberDAO.isCardIdExists(newCard, currentUser.getId())) {
+                                System.out.println("Lỗi: Mã thẻ thư viện đã được sử dụng bởi người khác!");
+                                break;
+                            }
+                        } catch (SQLException e) {
+                            System.out.println("Lỗi kiểm tra mã thẻ: " + e.getMessage());
+                            break;
+                        }
 
-                        currentUser.updateProfile(newAddress, newPhone, newEmail, newCard);
+                        if (!newAddress.isEmpty())
+                            currentUser.setAddress(newAddress);
+                        if (!newPhone.isEmpty())
+                            currentUser.setPhone(newPhone);
+                        if (!newEmail.isEmpty())
+                            currentUser.setEmail(newEmail);
+                        if (!newCard.isEmpty())
+                            currentUser.setLibraryCardId(newCard);
+
                         try {
                             memberDAO.updateMember(currentUser);
+                            System.out.println("Cập nhật thông tin thành công!");
                         } catch (SQLException e) {
                             System.out.println("Lỗi cập nhật DB: " + e.getMessage());
                         }
@@ -477,6 +507,11 @@ public class LibraryDemo {
         } catch (SQLException e) {
             System.out.println("Lỗi: " + e.getMessage());
         }
+    }
+
+    private static boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        return email.matches(emailRegex);
     }
 
     private static void displayBooks(List<Book> books) {

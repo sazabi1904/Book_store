@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS members (
     address VARCHAR(255),
     phone VARCHAR(20),
     email VARCHAR(100),
-    card_id VARCHAR(50)
+    card_id VARCHAR(50) UNIQUE
 );
 
 -- 2. Bảng sách (books)

@@ -105,4 +105,33 @@ public class MemberDAO {
             stmt.executeUpdate(sql);
         }
     }
+
+    public boolean isCardIdExists(String cardId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM members WHERE card_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, cardId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isCardIdExists(String cardId, int excludeId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM members WHERE card_id = ? AND id != ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, cardId);
+            pstmt.setInt(2, excludeId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
 }

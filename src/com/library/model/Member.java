@@ -44,6 +44,7 @@ public class Member extends Account {
     public void setAddress(String address) { this.address = address; }
     public void setPhone(String phone) { this.phone = phone; }
     public void setEmail(String email) { this.email = email; }
+    public void setLibraryCardId(String libraryCardId) { this.libraryCardId = libraryCardId; }
 
     public void showProfile(){
         System.out.println("====== Hồ sơ cá nhân ======");
