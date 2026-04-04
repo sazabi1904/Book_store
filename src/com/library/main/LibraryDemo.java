@@ -121,11 +121,15 @@ public class LibraryDemo {
         String address = scanner.nextLine();
         System.out.print("SỐ ĐIỆN THOẠI: ");
         String phone = scanner.nextLine();
-        System.out.print("EMAIL: ");
-        String email = scanner.nextLine();
-        if (!isValidEmail(email)) {
-            System.out.println("Lỗi: Định dạng Email không hợp lệ (ví dụ: abc@gmail.com)!");
-            return;
+        String email = "";
+        while (true) {
+            System.out.print("EMAIL: ");
+            email = scanner.nextLine();
+            if (isValidEmail(email)) {
+                break;
+            } else {
+                System.out.println("Lỗi: Định dạng Email không hợp lệ (ví dụ: abc@gmail.com)! Vui lòng nhập lại.");
+            }
         }
 
         System.out.print("MÃ THẺ THƯ VIỆN: ");
@@ -212,11 +216,15 @@ public class LibraryDemo {
                         String newAddress = scanner.nextLine();
                         System.out.print("CẬP NHẬT SỐ ĐIỆN THOẠI MỚI: ");
                         String newPhone = scanner.nextLine();
-                        System.out.print("CẬP NHẬT EMAIL MỚI: ");
-                        String newEmail = scanner.nextLine();
-                        if (!newEmail.isEmpty() && !isValidEmail(newEmail)) {
-                            System.out.println("Lỗi: Định dạng Email không hợp lệ!");
-                            break;
+                        String newEmail = "";
+                        while (true) {
+                            System.out.print("CẬP NHẬT EMAIL MỚI: ");
+                            newEmail = scanner.nextLine();
+                            if (newEmail.isEmpty() || isValidEmail(newEmail)) {
+                                break;
+                            } else {
+                                System.out.println("Lỗi: Định dạng Email không hợp lệ! Vui lòng nhập lại.");
+                            }
                         }
                         System.out.print("CẬP NHẬT MÃ THẺ THƯ VIỆN MỚI: ");
                         String newCard = scanner.nextLine();
