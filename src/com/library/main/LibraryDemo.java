@@ -106,7 +106,7 @@ public class LibraryDemo {
     }
 
     private static void register() {
-        System.out.println("--- Đăng ký thành viên mới ---");
+        System.out.println("=== Đăng ký thành viên mới ===");
         System.out.print("TÊN ĐĂNG NHẬP: ");
         String user = scanner.nextLine();
         System.out.print("MẬT KHẨU: ");
@@ -115,12 +115,40 @@ public class LibraryDemo {
         String name = scanner.nextLine();
         System.out.print("NGÀY SINH: ");
         String birth = scanner.nextLine();
-        System.out.print("GIỚI TÍNH: ");
-        String gender = scanner.nextLine();
+        String gender = "";
+        while (true) {
+            System.out.println("GIỚI TÍNH:");
+            System.out.println("1. Nam");
+            System.out.println("2. Nữ");
+            System.out.println("3. Khác");
+            System.out.print("Chọn: ");
+            String gChoice = scanner.nextLine();
+            if (gChoice.equals("1")) {
+                gender = "Nam";
+                break;
+            } else if (gChoice.equals("2")) {
+                gender = "Nữ";
+                break;
+            } else if (gChoice.equals("3")) {
+                gender = "Khác";
+                break;
+            } else {
+                System.out.println("Lỗi: Lựa chọn không hợp lệ! Vui lòng chọn lại.");
+            }
+        }
         System.out.print("ĐỊA CHỈ: ");
         String address = scanner.nextLine();
-        System.out.print("SỐ ĐIỆN THOẠI: ");
-        String phone = scanner.nextLine();
+
+        String phone = "";
+        while (true) {
+            System.out.print("SỐ ĐIỆN THOẠI: ");
+            phone = scanner.nextLine();
+            if (phone.matches("\\d+")) {
+                break;
+            } else {
+                System.out.println("Lỗi số điện thoại không đúng dạng! Vui lòng nhập lại");
+            }
+        }
         String email = "";
         while (true) {
             System.out.print("EMAIL: ");
@@ -128,20 +156,24 @@ public class LibraryDemo {
             if (isValidEmail(email)) {
                 break;
             } else {
-                System.out.println("Lỗi: Định dạng Email không hợp lệ (ví dụ: abc@gmail.com)! Vui lòng nhập lại.");
+                System.out.println("Lỗi: Định dạng Email không hợp lệ. Vui lòng nhập lại.");
             }
         }
 
-        System.out.print("MÃ THẺ THƯ VIỆN: ");
-        String card = scanner.nextLine();
-        try {
-            if (memberDAO.isCardIdExists(card)) {
-                System.out.println("Lỗi: Mã thẻ thư viện đã tồn tại trong hệ thống!");
+        String card = "";
+        while (true) {
+            System.out.print("MÃ THẺ THƯ VIỆN: ");
+            card = scanner.nextLine();
+            try {
+                if (memberDAO.isCardIdExists(card)) {
+                    System.out.println("Lỗi: Mã thẻ thư viện đã tồn tại trong hệ thống! Vui lòng nhập lại.");
+                } else {
+                    break;
+                }
+            } catch (SQLException e) {
+                System.out.println("Lỗi kiểm tra mã thẻ: " + e.getMessage());
                 return;
             }
-        } catch (SQLException e) {
-            System.out.println("Lỗi kiểm tra mã thẻ: " + e.getMessage());
-            return;
         }
 
         Member m = new Member(user, pass, name, birth, gender, address, phone, email, card);
@@ -214,8 +246,16 @@ public class LibraryDemo {
                     case "2":
                         System.out.print("CẬP NHẬT ĐỊA CHỈ MỚI: ");
                         String newAddress = scanner.nextLine();
-                        System.out.print("CẬP NHẬT SỐ ĐIỆN THOẠI MỚI: ");
-                        String newPhone = scanner.nextLine();
+                        String newPhone = "";
+                        while (true) {
+                            System.out.print("CẬP NHẬT SỐ ĐIỆN THOẠI MỚI: ");
+                            newPhone = scanner.nextLine();
+                            if (newPhone.isEmpty() || newPhone.matches("\\d+")) {
+                                break;
+                            } else {
+                                System.out.println("Lỗi: Số điện thoại chỉ được chứa số! Vui lòng nhập lại.");
+                            }
+                        }
                         String newEmail = "";
                         while (true) {
                             System.out.print("CẬP NHẬT EMAIL MỚI: ");
@@ -226,17 +266,24 @@ public class LibraryDemo {
                                 System.out.println("Lỗi: Định dạng Email không hợp lệ! Vui lòng nhập lại.");
                             }
                         }
-                        System.out.print("CẬP NHẬT MÃ THẺ THƯ VIỆN MỚI: ");
-                        String newCard = scanner.nextLine();
-                        try {
-                            if (!newCard.isEmpty() && memberDAO.isCardIdExists(newCard, currentUser.getId())) {
-                                System.out.println("Lỗi: Mã thẻ thư viện đã được sử dụng bởi người khác!");
+                        String newCard = "";
+                        boolean sqlError = false;
+                        while (true) {
+                            System.out.print("CẬP NHẬT MÃ THẺ THƯ VIỆN MỚI: ");
+                            newCard = scanner.nextLine();
+                            try {
+                                if (!newCard.isEmpty() && memberDAO.isCardIdExists(newCard, currentUser.getId())) {
+                                    System.out.println("Lỗi: Mã thẻ thư viện đã được sử dụng bởi người khác! Vui lòng nhập lại.");
+                                } else {
+                                    break;
+                                }
+                            } catch (SQLException e) {
+                                System.out.println("Lỗi kiểm tra mã thẻ: " + e.getMessage());
+                                sqlError = true;
                                 break;
                             }
-                        } catch (SQLException e) {
-                            System.out.println("Lỗi kiểm tra mã thẻ: " + e.getMessage());
-                            break;
                         }
+                        if (sqlError) break;
 
                         if (!newAddress.isEmpty())
                             currentUser.setAddress(newAddress);
