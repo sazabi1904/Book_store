@@ -13,10 +13,6 @@ public class LibraryDemo {
     private static Member currentUser = null;
 
     public static void main(String[] args) {
-        // Mặc định thêm tài khoản admin nếu chưa có (trong thực tế nên dùng database
-        // migration)
-        // Lưu ý: Ở đây ta giả sử admin đã có trong DB hoặc được quản lý riêng.
-
         while (true) {
             displayMenu();
             System.out.print("CHỌN: ");
