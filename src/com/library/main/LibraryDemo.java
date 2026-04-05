@@ -240,7 +240,7 @@ public class LibraryDemo {
             // Menu cho Admin
             while (true) {
                 System.out.println("=== Quản lý thông tin cá nhân ===");
-                System.out.println("1. Xóa thành viên");
+                System.out.println("1. Xem danh sách thành viên đã đăng kí trước đó");
                 System.out.println("2. Quay lại");
                 System.out.print("Chọn: ");
                 String adminChoice = scanner.nextLine();
@@ -250,13 +250,40 @@ public class LibraryDemo {
 
                 switch (adminChoice) {
                     case "1":
-                        System.out.print("NHẬP TÊN ĐĂNG NHẬP CỦA THÀNH VIÊN CẦN XÓA: ");
-                        String delUser = scanner.nextLine();
                         try {
-                            memberDAO.deleteMember(delUser);
-                            System.out.println("ĐÃ XÓA THÀNH VIÊN: " + delUser);
+                            List<Member> members = memberDAO.getAllMembers();
+                            System.out.println("\n=== DANH SÁCH THÀNH VIÊN ĐÃ ĐĂNG KÍ ===");
+                            if (members.isEmpty()) {
+                                System.out.println("Chưa có thành viên nào đăng ký.");
+                            } else {
+                                String formatString = "%-12s | %-20s | %-10s | %-9s | %-11s | %-11s | %-20s | %-9s%n";
+                                System.out.printf(formatString,
+                                        "Username", "Họ và tên", "Ngày sinh", "Giới tính", "Địa chỉ", "SĐT", "Email",
+                                        "Mã thẻ");
+                                System.out.println("-".repeat(125));
+                                for (Member m : members) {
+                                    System.out.printf(formatString,
+                                            m.getUsername() != null ? (m.getUsername().length() > 12
+                                                    ? m.getUsername().substring(0, 9) + "..."
+                                                    : m.getUsername()) : "N/A",
+                                            m.getFullName() != null ? (m.getFullName().length() > 20
+                                                    ? m.getFullName().substring(0, 17) + "..."
+                                                    : m.getFullName()) : "N/A",
+                                            m.getBirthDate() != null ? m.getBirthDate() : "N/A",
+                                            m.getGender() != null ? m.getGender() : "N/A",
+                                            m.getAddress() != null ? (m.getAddress().length() > 15
+                                                    ? m.getAddress().substring(0, 12) + "..."
+                                                    : m.getAddress()) : "N/A",
+                                            m.getPhone() != null ? m.getPhone() : "N/A",
+                                            m.getEmail() != null ? (m.getEmail().length() > 20
+                                                    ? m.getEmail().substring(0, 17) + "..."
+                                                    : m.getEmail()) : "N/A",
+                                            m.getLibraryCardId() != null ? m.getLibraryCardId() : "N/A");
+                                }
+                                System.out.println("-".repeat(125));
+                            }
                         } catch (SQLException e) {
-                            System.out.println("Lỗi xóa: " + e.getMessage());
+                            System.out.println("Lỗi lấy danh sách thành viên: " + e.getMessage());
                         }
                         break;
                     default:

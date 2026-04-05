@@ -6,7 +6,12 @@
             "name": "LibraryDemo",
             "request": "launch",
             "mainClass": "com.library.main.LibraryDemo",
-            "projectName": "Book_store_a5b87b6"
+            "projectName": "Book_store_a5b87b6",
+            "classPaths": [
+                "${workspaceFolder}/bin",
+                "${workspaceFolder}/lib/mysql-connector-j-8.3.0.jar"
+            ],
+            "vmArgs": "-Dfile.encoding=UTF-8"
         },
         {
             "type": "java",

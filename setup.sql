@@ -65,7 +65,7 @@ VALUES
 ('B010', 'Sapiens: Lược sử loài người', 'Yuval Noah Harari', 'Khoa học', 2014, 2, 'available');
 
 -- ==================== KIỂM TRA ====================
-SELECT '✅ Database library_db đã được tạo lại thành công!' AS ThongBao;
+SELECT ' Database library_db đã được tạo lại thành công!' AS ThongBao;
 
 SELECT 'Số thành viên:' AS Info, COUNT(*) FROM members;
 SELECT 'Số sách:' AS Info, COUNT(*) FROM books;
