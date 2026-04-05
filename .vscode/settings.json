@@ -1,6 +1,17 @@
 {
-    "java.project.sourcePaths": ["src"],
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar"
-    ]
+    // Bắt Java Run sử dụng Integrated Terminal (KHÔNG dùng Debug Console)
+    "java.debug.settings.console": "integratedTerminal",
+    // Ép JVM dùng UTF-8 cho mọi Run / Debug
+    "java.jdt.ls.vmargs": "-Dfile.encoding=UTF-8",
+    // Cấu hình Terminal CMD sang UTF-8
+    "terminal.integrated.defaultProfile.windows": "cmd-utf8",
+    "terminal.integrated.profiles.windows": {
+        "cmd-utf8": {
+            "path": "cmd.exe",
+            "args": [
+                "/k",
+                "chcp 65001"
+            ]
+        }
+    }
 }
