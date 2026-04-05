@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "LibraryDemo",
+            "request": "launch",
+            "mainClass": "com.library.main.LibraryDemo",
+            "projectName": "Book_store_a5b87b6"
+        },
+        {
+            "type": "java",
+            "name": "Run Java (UTF-8)",
+            "request": "launch",
+            "mainClass": "com.library.main.LibraryMain",
+            "vmArgs": "-Dfile.encoding=UTF-8"
+        }
+    ]
+}
