@@ -323,18 +323,39 @@ public class LibraryDemo {
 
         while (true) {
             System.out.println("\n--- QUẢN LÝ THƯ VIỆN ---");
+            System.out.println("1. Quản lý sách");
+            System.out.println("2. Quản lý thành viên");
+            System.out.println("3. Quay lại");
+            System.out.print("Chọn: ");
+            String choice = scanner.nextLine();
+
+            if (choice.equals("3")) break;
+
+            switch (choice) {
+                case "1":
+                    manageBooks();
+                    break;
+                case "2":
+                    manageMembersAdmin();
+                    break;
+                default:
+                    System.out.println("Lựa chọn không hợp lệ!");
+            }
+        }
+    }
+
+    private static void manageBooks() {
+        while (true) {
+            System.out.println("\n--- QUẢN LÝ SÁCH ---");
             System.out.println("1. Thêm sách");
             System.out.println("2. Xóa sách (theo mã)");
             System.out.println("3. Xóa TOÀN BỘ sách");
             System.out.println("4. Sửa thông tin sách");
-            System.out.println("5. Xem danh sách thành viên");
-            System.out.println("6. Xóa thành viên ");
-            System.out.println("7. Xóa TOÀN BỘ thành viên");
-            System.out.println("8. Quay lại");
+            System.out.println("5. Quay lại");
             System.out.print("Chọn: ");
             String sub = scanner.nextLine();
 
-            if (sub.equals("8")) {
+            if (sub.equals("5")) {
                 break;
             } else if (sub.equals("1")) {
                 System.out.print("Mã sách: ");
@@ -357,10 +378,12 @@ public class LibraryDemo {
                 }
             } else if (sub.equals("2")) {
                 try {
-                    if (bookDAO.getAllBooks().isEmpty()) {
+                    List<Book> allBooks = bookDAO.getAllBooks();
+                    if (allBooks.isEmpty()) {
                         System.out.println("Thư viện hiện đang trống, không có sách để xóa!");
                         continue;
                     }
+                    displayBooks(allBooks);
                     System.out.print("Nhập mã sách cần xóa: ");
                     String id = scanner.nextLine();
                     bookDAO.deleteBook(id);
@@ -387,10 +410,12 @@ public class LibraryDemo {
                 }
             } else if (sub.equals("4")) {
                 try {
-                    if (bookDAO.getAllBooks().isEmpty()) {
+                    List<Book> allBooks = bookDAO.getAllBooks();
+                    if (allBooks.isEmpty()) {
                         System.out.println("Thư viện hiện đang trống, không có gì để sửa!");
                         continue;
                     }
+                    displayBooks(allBooks);
                     System.out.print("Nhập mã sách cần sửa: ");
                     String id = scanner.nextLine();
                     List<Book> books = bookDAO.searchBooks(id);
@@ -437,9 +462,27 @@ public class LibraryDemo {
                 } catch (SQLException e) {
                     System.out.println("Lỗi: " + e.getMessage());
                 }
-            } else if (sub.equals("5")) {
+            } else {
+                System.out.println("Lựa chọn không hợp lệ!");
+            }
+        }
+    }
+
+    private static void manageMembersAdmin() {
+        while (true) {
+            System.out.println("\n--- QUẢN LÝ THÀNH VIÊN ---");
+            System.out.println("1. Xem danh sách thành viên");
+            System.out.println("2. Xóa thành viên");
+            System.out.println("3. Xóa TOÀN BỘ thành viên");
+            System.out.println("4. Quay lại");
+            System.out.print("Chọn: ");
+            String sub = scanner.nextLine();
+
+            if (sub.equals("4")) {
+                break;
+            } else if (sub.equals("1")) {
                 viewAllMembers();
-            } else if (sub.equals("6")) {
+            } else if (sub.equals("2")) {
                 try {
                     System.out.print("Nhập username thành viên cần xóa: ");
                     String user = scanner.nextLine();
@@ -452,7 +495,7 @@ public class LibraryDemo {
                 } catch (SQLException e) {
                     System.out.println("Lỗi: " + e.getMessage());
                 }
-            } else if (sub.equals("7")) {
+            } else if (sub.equals("3")) {
                 System.out.print("CẢNH BÁO: Bạn có chắc muốn xóa TOÀN BỘ thành viên? (Y/N): ");
                 String confirm = scanner.nextLine();
                 if (confirm.equalsIgnoreCase("Y")) {
