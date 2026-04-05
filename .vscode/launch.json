@@ -6,6 +6,13 @@
             "name": "LibraryDemo",
             "request": "launch",
             "mainClass": "com.library.main.LibraryDemo",
+            "projectName": "LibraryDemo_789ddcf6"
+        },
+        {
+            "type": "java",
+            "name": "LibraryDemo",
+            "request": "launch",
+            "mainClass": "com.library.main.LibraryDemo",
             "projectName": "Book_store_a5b87b6"
         },
         {
