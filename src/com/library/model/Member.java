@@ -9,6 +9,7 @@ public class Member extends Account {
     private String phone;
     private String email;
     private String libraryCardId;
+    private int loginCount;
 
     public Member(String username, String password, String fullName, String birthDate,
                   String gender, String address, String phone, String email, String libraryCardId) {
@@ -24,9 +25,10 @@ public class Member extends Account {
 
     // Constructor with ID from DB
     public Member(int id, String username, String password, String fullName, String birthDate,
-                  String gender, String address, String phone, String email, String libraryCardId) {
+                  String gender, String address, String phone, String email, String libraryCardId, int loginCount) {
         this(username, password, fullName, birthDate, gender, address, phone, email, libraryCardId);
         this.id = id;
+        this.loginCount = loginCount;
     }
 
     public int getId() { return id; }
@@ -37,6 +39,7 @@ public class Member extends Account {
     public String getPhone() { return phone; }
     public String getEmail() { return email; }
     public String getLibraryCardId() { return libraryCardId; }
+    public int getLoginCount() { return loginCount; }
 
     public void setFullName(String fullName) { this.fullName = fullName; }
     public void setBirthDate(String birthDate) { this.birthDate = birthDate; }
@@ -45,6 +48,7 @@ public class Member extends Account {
     public void setPhone(String phone) { this.phone = phone; }
     public void setEmail(String email) { this.email = email; }
     public void setLibraryCardId(String libraryCardId) { this.libraryCardId = libraryCardId; }
+    public void setLoginCount(int loginCount) { this.loginCount = loginCount; }
 
     public void showProfile(){
         System.out.println("====== Hồ sơ cá nhân ======");
