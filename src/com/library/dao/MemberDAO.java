@@ -41,7 +41,8 @@ public class MemberDAO {
                         rs.getString("address"),
                         rs.getString("phone"),
                         rs.getString("email"),
-                        rs.getString("card_id")));
+                        rs.getString("card_id"),
+                        rs.getInt("login_count")));
             }
         }
         return members;
@@ -65,7 +66,8 @@ public class MemberDAO {
                             rs.getString("address"),
                             rs.getString("phone"),
                             rs.getString("email"),
-                            rs.getString("card_id"));
+                            rs.getString("card_id"),
+                            rs.getInt("login_count"));
                 }
             }
         }
@@ -151,10 +153,20 @@ public class MemberDAO {
                             rs.getString("address"),
                             rs.getString("phone"),
                             rs.getString("email"),
-                            rs.getString("card_id"));
+                            rs.getString("card_id"),
+                            rs.getInt("login_count"));
                 }
             }
         }
         return null;
+    }
+
+    public void incrementLoginCount(int memberId) throws SQLException {
+        String sql = "UPDATE members SET login_count = login_count + 1 WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, memberId);
+            pstmt.executeUpdate();
+        }
     }
 }

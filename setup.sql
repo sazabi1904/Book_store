@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS members (
     email VARCHAR(100),
     card_id VARCHAR(50) UNIQUE NOT NULL,
     role ENUM('ADMIN', 'READER') DEFAULT 'READER',
+    login_count INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

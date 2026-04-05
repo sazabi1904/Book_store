@@ -78,13 +78,13 @@ public class LibraryDemo {
 
         if (currentUser != null) {
             String roleText = isAdmin() ? "ADMIN" : "READER";
-            System.out.println("Xin chào: " + currentUser.getFullName() + " (" + roleText + ")");
+            System.out.println("Xin chào: " + currentUser.getFullName());
         }
 
         System.out.println("1. ĐĂNG NHẬP");
         System.out.println("2. ĐĂNG XUẤT");
         System.out.println("3. ĐĂNG KÍ THÀNH VIÊN MỚI");
-        System.out.println("4. QUẢN LÝ THÔNG TIN CÁ NHÂN");
+        System.out.println("4. QUẢN LÝ ĐĂNG NHẬP");
         System.out.println("5. QUẢN LÝ THƯ VIỆN");
         System.out.println("6. TÌM KIẾM SÁCH");
         System.out.println("7. XEM DANH SÁCH SÁCH");
@@ -116,6 +116,7 @@ public class LibraryDemo {
             Member member = memberDAO.login(user, pass);
             if (member != null) {
                 currentUser = member;
+                memberDAO.incrementLoginCount(member.getId());
                 System.out.println("Đăng nhập thành công! Xin chào " + currentUser.getUsername());
             } else if (user.equals("admin") && pass.equals("123")) {
                 currentUser = new Member("admin", "123", "Quản trị viên", "", "Khác", "", "", "", "ADMIN-DEF");
@@ -240,7 +241,7 @@ public class LibraryDemo {
             // Menu cho Admin
             while (true) {
                 System.out.println("=== Quản lý thông tin cá nhân ===");
-                System.out.println("1. Xem danh sách thành viên đã đăng kí trước đó");
+                System.out.println("1. Xem số lần đăng nhập Reader");
                 System.out.println("2. Quay lại");
                 System.out.print("Chọn: ");
                 String adminChoice = scanner.nextLine();
@@ -252,38 +253,25 @@ public class LibraryDemo {
                     case "1":
                         try {
                             List<Member> members = memberDAO.getAllMembers();
-                            System.out.println("\n=== DANH SÁCH THÀNH VIÊN ĐÃ ĐĂNG KÍ ===");
+                            System.out.println("\n=== SỐ LẦN ĐĂNG NHẬP CỦA READER ===");
                             if (members.isEmpty()) {
                                 System.out.println("Chưa có thành viên nào đăng ký.");
                             } else {
-                                String formatString = "%-12s | %-20s | %-10s | %-9s | %-11s | %-11s | %-20s | %-9s%n";
-                                System.out.printf(formatString,
-                                        "Username", "Họ và tên", "Ngày sinh", "Giới tính", "Địa chỉ", "SĐT", "Email",
-                                        "Mã thẻ");
-                                System.out.println("-".repeat(125));
+                                String formatString = "%-15s | %-20s | %-20s%n";
+                                System.out.printf(formatString, "Username", "Họ và tên", "Số lần đăng nhập");
+                                System.out.println("-".repeat(65));
                                 for (Member m : members) {
-                                    System.out.printf(formatString,
-                                            m.getUsername() != null ? (m.getUsername().length() > 12
-                                                    ? m.getUsername().substring(0, 9) + "..."
-                                                    : m.getUsername()) : "N/A",
-                                            m.getFullName() != null ? (m.getFullName().length() > 20
-                                                    ? m.getFullName().substring(0, 17) + "..."
-                                                    : m.getFullName()) : "N/A",
-                                            m.getBirthDate() != null ? m.getBirthDate() : "N/A",
-                                            m.getGender() != null ? m.getGender() : "N/A",
-                                            m.getAddress() != null ? (m.getAddress().length() > 15
-                                                    ? m.getAddress().substring(0, 12) + "..."
-                                                    : m.getAddress()) : "N/A",
-                                            m.getPhone() != null ? m.getPhone() : "N/A",
-                                            m.getEmail() != null ? (m.getEmail().length() > 20
-                                                    ? m.getEmail().substring(0, 17) + "..."
-                                                    : m.getEmail()) : "N/A",
-                                            m.getLibraryCardId() != null ? m.getLibraryCardId() : "N/A");
+                                    if (!m.getUsername().equals("admin")) {
+                                        System.out.printf(formatString,
+                                                m.getUsername(),
+                                                m.getFullName(),
+                                                m.getLoginCount() + " lần");
+                                    }
                                 }
-                                System.out.println("-".repeat(125));
+                                System.out.println("-".repeat(65));
                             }
                         } catch (SQLException e) {
-                            System.out.println("Lỗi lấy danh sách thành viên: " + e.getMessage());
+                            System.out.println("Lỗi lấy thông tin: " + e.getMessage());
                         }
                         break;
                     default:
