@@ -13,5 +13,11 @@
                 "chcp 65001"
             ]
         }
+    },
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ],
+    "code-runner.executorMap": {
+        "java": "cmd /c RunProject.bat"
     }
 }

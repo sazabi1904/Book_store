@@ -10,7 +10,7 @@ public class BookDAO {
     public void addBook(Book book) throws SQLException {
         String sql = "INSERT INTO books (id, title, author, category, year, quantity) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, book.getBookId());
             pstmt.setString(2, book.getTitle());
             pstmt.setString(3, book.getAuthor());
@@ -25,17 +25,16 @@ public class BookDAO {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books";
         try (Connection conn = DBConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 books.add(new Book(
-                    rs.getString("id"),
-                    rs.getString("title"),
-                    rs.getString("author"),
-                    rs.getString("category"),
-                    rs.getInt("year"),
-                    rs.getInt("quantity")
-                ));
+                        rs.getString("id"),
+                        rs.getString("title"),
+                        rs.getString("author"),
+                        rs.getString("category"),
+                        rs.getInt("year"),
+                        rs.getInt("quantity")));
             }
         }
         return books;
@@ -44,7 +43,7 @@ public class BookDAO {
     public void updateBook(Book book) throws SQLException {
         String sql = "UPDATE books SET title=?, author=?, category=?, year=?, quantity=? WHERE id=?";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, book.getTitle());
             pstmt.setString(2, book.getAuthor());
             pstmt.setString(3, book.getCategory());
@@ -58,7 +57,7 @@ public class BookDAO {
     public void deleteBook(String bookId) throws SQLException {
         String sql = "DELETE FROM books WHERE id=?";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, bookId);
             pstmt.executeUpdate();
         }
@@ -67,7 +66,7 @@ public class BookDAO {
     public void deleteAllBooks() throws SQLException {
         String sql = "DELETE FROM books";
         try (Connection conn = DBConnection.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
             stmt.executeUpdate(sql);
         }
     }
@@ -76,7 +75,7 @@ public class BookDAO {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books WHERE id LIKE ? OR title LIKE ? OR author LIKE ?";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             String searchPattern = "%" + keyword + "%";
             pstmt.setString(1, searchPattern);
             pstmt.setString(2, searchPattern);
@@ -84,16 +83,49 @@ public class BookDAO {
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     books.add(new Book(
-                        rs.getString("id"),
-                        rs.getString("title"),
-                        rs.getString("author"),
-                        rs.getString("category"),
-                        rs.getInt("year"),
-                        rs.getInt("quantity")
-                    ));
+                            rs.getString("id"),
+                            rs.getString("title"),
+                            rs.getString("author"),
+                            rs.getString("category"),
+                            rs.getInt("year"),
+                            rs.getInt("quantity")));
                 }
             }
         }
         return books;
+    }
+
+    // Phương thức này để lấy Book theo bookId
+    public Book getByBookId(String bookId) throws SQLException {
+        String sql = "SELECT * FROM books WHERE id = ? OR bookId = ?";
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, bookId);
+            pstmt.setString(2, bookId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Book(
+                            rs.getString("id"),
+                            rs.getString("title"),
+                            rs.getString("author"),
+                            rs.getString("category"),
+                            rs.getInt("year"),
+                            rs.getInt("quantity"));
+                }
+            }
+        }
+        return null;
+    }
+
+    // Phương thức cập nhật trạng thái sách (available / borrowed)
+    public void updateTrangThai(String bookId, String trangThai) throws SQLException {
+        String sql = "UPDATE books SET trangThai = ? WHERE id = ? OR bookId = ?";
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, trangThai);
+            pstmt.setString(2, bookId);
+            pstmt.setString(3, bookId);
+            pstmt.executeUpdate();
+        }
     }
 }
