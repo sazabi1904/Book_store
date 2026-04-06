@@ -3,6 +3,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AlterDB",
+            "request": "launch",
+            "mainClass": "com.library.main.AlterDB",
+            "projectName": "Book_store_2f376974"
+        },
+        {
+            "type": "java",
+            "name": "LibraryDemo",
+            "request": "launch",
+            "mainClass": "com.library.main.LibraryDemo",
+            "projectName": "Book_store_2f376974"
+        },
+        {
+            "type": "java",
             "name": "LibraryDemo",
             "request": "launch",
             "mainClass": "com.library.main.LibraryDemo",

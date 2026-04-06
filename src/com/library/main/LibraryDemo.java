@@ -51,41 +51,41 @@ public class LibraryDemo {
                     viewAllBooks();
                     break;
                 case 8:
-                    lapPhieuMuon();
+                    taoPhieuMuon();
                     break;
                 case 9:
                     if (isAdmin()) {
                         xuLyTraSach();
                     } else {
-                        System.out.println(" Bạn không có quyền truy cập chức năng này!");
+                        System.out.println("Tài khoản không có quyền truy cập!");
                     }
                     break;
                 case 10:
                     if (isAdmin()) {
                         quanLyViPham();
                     } else {
-                        System.out.println(" Bạn không có quyền truy cập chức năng này!");
+                        System.out.println("Tài khoản không có quyền truy cập!");
                     }
                     break;
                 case 11:
                     if (isAdmin()) {
                         manageReaders();
                     } else {
-                        System.out.println(" Tài khoản không có quyền truy cập!");
+                        System.out.println("Tài khoản không có quyền truy cập!");
                     }
                     break;
                 case 12:
                     if (isAdmin()) {
                         viewStatistics();
                     } else {
-                        System.out.println(" Tài khoản không có quyền truy cập!");
+                        System.out.println("Tài khoản không có quyền truy cập!");
                     }
                     break;
                 case 13:
                     if (isAdmin()) {
                         viewBorrowTracking();
                     } else {
-                        System.out.println(" Tài khoản không có quyền truy cập!");
+                        System.out.println("Tài khoản không có quyền truy cập!");
                     }
                     break;
                 case 0:
@@ -100,10 +100,10 @@ public class LibraryDemo {
 
     private static void displayMenu() {
         System.out.println("\n===== HỆ THỐNG THƯ VIỆN =====");
-
+        
         if (currentUser != null) {
             String roleText = isAdmin() ? "ADMIN" : "READER";
-            System.out.println("Xin chào: " + currentUser.getFullName());
+            System.out.println("Xin chào: " + currentUser.getFullName() + " (" + roleText + ")");
         }
 
         System.out.println("1. ĐĂNG NHẬP");
@@ -113,7 +113,7 @@ public class LibraryDemo {
         System.out.println("5. QUẢN LÝ THƯ VIỆN");
         System.out.println("6. TÌM KIẾM SÁCH");
         System.out.println("7. XEM DANH SÁCH SÁCH");
-        System.out.println("8. LẬP PHIẾU MƯỢN SÁCH");
+        System.out.println("8. TẠO PHIẾU MƯỢN SÁCH");
         System.out.println("9. XỬ LÝ TRẢ SÁCH");
         System.out.println("10. QUẢN LÝ VI PHẠM");
         System.out.println("11. QUẢN LÝ ĐỘC GIẢ");
@@ -700,16 +700,14 @@ public class LibraryDemo {
         }
     }
 
-    private static int lastPhieuId = 0;
-    private static String lastNgayHenTra = "";
+    private static java.util.List<Integer> listPhieuId = new java.util.ArrayList<>();
+    private static java.util.List<String> listNgayHenTra = new java.util.ArrayList<>();
+    private static java.util.List<String> listMemberName = new java.util.ArrayList<>();
+    private static java.util.List<String> danhSachViPham = new java.util.ArrayList<>();
 
-    private static void lapPhieuMuon() {
+    private static void taoPhieuMuon() {
         if (currentUser == null) {
             System.out.println("Bạn cần đăng nhập trước!");
-            return;
-        }
-        if (isAdmin()) {
-            System.out.println(" Admin không được phép lập phiếu mượn!");
             return;
         }
 
@@ -720,121 +718,209 @@ public class LibraryDemo {
             System.out.print("Nhập số lượng sách muốn mượn: ");
             int soLuong = Integer.parseInt(scanner.nextLine().trim());
 
-            lastPhieuId = (int) (Math.random() * 10000) + 1000;
-            lastNgayHenTra = ngayHenTraStr; // LƯU NGÀY HẸN TRẢ THỰC TẾ
+            int phieuId = (int) (Math.random() * 10000) + 1000;
+
+            // Lưu thông tin phiếu
+            listPhieuId.add(phieuId);
+            listNgayHenTra.add(ngayHenTraStr);
+            listMemberName.add(currentUser.getFullName());
 
             for (int i = 0; i < soLuong; i++) {
                 System.out.print("Nhập mã sách thứ " + (i + 1) + ": ");
                 String bookId = scanner.nextLine().trim();
                 System.out.println("✓ Đã thêm sách: " + bookId);
             }
-
-            System.out.println("Lập phiếu mượn **THÀNH CÔNG**!");
-            System.out.println("   ID phiếu mượn : **#" + lastPhieuId + "**");
+            System.out.println("--- TẠO PHIẾU MƯỢN THÀNH CÔNG! ---");
+            System.out.println("   ID phiếu mượn : #" + phieuId);
             System.out.println("   Thành viên     : " + currentUser.getFullName());
             System.out.println("   Ngày hẹn trả   : " + ngayHenTraStr);
             System.out.println("   Số sách mượn   : " + soLuong + " cuốn");
-
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             System.out.println(" Lỗi: " + e.getMessage());
         }
     }
 
     private static void xuLyTraSach() {
         if (currentUser == null || !isAdmin()) {
-            System.out.println(" Chỉ Admin mới có quyền xử lý trả sách!");
-            return;
-        }
-        if (lastPhieuId == 0 || lastNgayHenTra.isEmpty()) {
-            System.out.println(" Chưa có phiếu mượn nào được lập. Vui lòng lập phiếu trước!");
+            System.out.println("Chỉ Admin mới có quyền xử lý trả sách!");
             return;
         }
 
-        try {
-            System.out.print("Nhập ID phiếu mượn: ");
-            int phieuId = Integer.parseInt(scanner.nextLine().trim());
+        while (true) {
+            System.out.println("\n--- XỬ LÝ TRẢ SÁCH ---");
+            System.out.println("1. XEM DANH SÁCH PHIẾU MƯỢN");
+            System.out.println("2. THỰC HIỆN TRẢ SÁCH");
+            System.out.println("0. QUAY LẠI");
+            System.out.print("CHỌN: ");
 
-            if (phieuId != lastPhieuId) {
-                System.out.println(" Không tìm thấy ID phiếu mượn!");
+            int sub = -1;
+            try {
+                sub = Integer.parseInt(scanner.nextLine().trim());
+            } catch (Exception e) {
+                System.out.println("Vui lòng nhập số!");
+                continue;
+            }
+
+            if (listPhieuId.isEmpty()) {
+                System.out.println("Chưa có phiếu mượn nào được tạo!");
                 return;
             }
 
+            if (sub == 0) return;
+            if (sub == 1) xemTatCaPhieuMuon();
+            else if (sub == 2) thucHienTraSach();
+            else System.out.println("Lựa chọn không hợp lệ!");
+        }
+    }
+
+    private static void xemTatCaPhieuMuon() {
+        System.out.println("\n--- DANH SÁCH PHIẾU MƯỢN ---");
+        if (listPhieuId.isEmpty()) {
+            System.out.println("Chưa có phiếu mượn nào được tạo!");
+            return;
+        }
+        for (int i = 0; i < listPhieuId.size(); i++) {
+            System.out.println("ID Phiếu     : #" + listPhieuId.get(i));
+            System.out.println("Thành viên   : " + listMemberName.get(i));
+            System.out.println("Ngày hẹn trả : " + listNgayHenTra.get(i));
+            System.out.println("Trạng thái   : Đang mượn");
+        }
+    }
+
+    private static void thucHienTraSach() {
+        try {
+            System.out.print("Nhập ID phiếu mượn: #");
+            int phieuId = Integer.parseInt(scanner.nextLine().trim());
+
+            int index = listPhieuId.indexOf(phieuId);
+            if (index == -1) {
+                System.out.println("Không tìm thấy phiếu mượn #" + phieuId);
+                return;
+            }
+
+            String ngayHenTraStr = listNgayHenTra.get(index);
+            String memberName = listMemberName.get(index);
+
             java.sql.Date ngayTraThucTe = new java.sql.Date(System.currentTimeMillis());
-            java.sql.Date ngayHenTra = java.sql.Date.valueOf(lastNgayHenTra);
+            java.sql.Date ngayHenTra = java.sql.Date.valueOf(ngayHenTraStr);
 
-            long diffInMillies = ngayTraThucTe.getTime() - ngayHenTra.getTime();
-            long soNgayTre = diffInMillies / (24 * 60 * 60 * 1000);
+            long soNgayTre = (ngayTraThucTe.getTime() - ngayHenTra.getTime()) / (24 * 60 * 60 * 1000);
 
-            System.out.println("\n→ Đang xử lý trả sách cho phiếu #" + phieuId);
+            System.out.println("\n--- Đang thực hiện trả sách cho phiếu #" + phieuId + " ---");
+            System.out.println("Thành viên       : " + memberName);
             System.out.println("Ngày hẹn trả     : " + ngayHenTra);
             System.out.println("Ngày trả thực tế : " + ngayTraThucTe);
 
             if (soNgayTre > 0) {
-                System.out.println("→ Trả muộn **" + soNgayTre + " ngày**");
+                System.out.println("→ Trả muộn: " + soNgayTre + " ngày");
 
-                // Hỏi có ghi nhận vi phạm không
                 System.out.print("\nGhi nhận vi phạm trả muộn? (1: Có, 0: Không): ");
-                int ghiViPham = Integer.parseInt(scanner.nextLine().trim());
-
-                if (ghiViPham == 1) {
-                    System.out.print("Nhập ID chi tiết phiếu: ");
-                    int chiTietId = Integer.parseInt(scanner.nextLine().trim());
-                    System.out.println("✓ Đã ghi nhận vi phạm trả muộn cho chi tiết phiếu #" + chiTietId);
+                if (Integer.parseInt(scanner.nextLine().trim()) == 1) {
+                    String info = String.format("Phiếu #%d | Trả muộn %d ngày | Ngày trả: %s", 
+                        phieuId, soNgayTre, ngayTraThucTe);
+                    danhSachViPham.add(info);
+                    System.out.println("✓ Đã ghi nhận vi phạm trả muộn!");
                 }
             } else {
                 System.out.println("→ Trả đúng hạn.");
             }
 
-            System.out.println("\n Xử lý trả sách cho phiếu #" + phieuId + " hoàn tất!");
+            System.out.println("\nĐã thực hiện trả sách thành công cho phiếu #" + phieuId);
 
         } catch (Exception e) {
-            System.out.println(" Lỗi: " + e.getMessage());
+            System.out.println("Lỗi: " + e.getMessage());
         }
     }
 
     private static void quanLyViPham() {
         if (currentUser == null || !isAdmin()) {
-            System.out.println(" Chỉ Admin mới có quyền quản lý vi phạm!");
-            return;
-        }
-        if (lastNgayHenTra.isEmpty()) {
-            System.out.println(" Chưa có phiếu mượn nào được lập!");
+            System.out.println("Chỉ Admin mới có quyền quản lý vi phạm!");
             return;
         }
 
+        while (true) {
+            System.out.println("\n--- QUẢN LÝ VI PHẠM ---");
+            System.out.println("1. XEM DANH SÁCH VI PHẠM");
+            System.out.println("2. THỰC HIỆN XỬ LÝ VI PHẠM");
+            System.out.println("0. QUAY LẠI");
+            System.out.print("CHỌN: ");
+
+            int sub = -1;
+            try {
+                sub = Integer.parseInt(scanner.nextLine().trim());
+            } catch (Exception e) {
+                System.out.println("Vui lòng nhập số!");
+                continue;
+            }
+
+            if (sub == 0) return;
+            if (sub == 1) xemTatCaViPham();
+            else if (sub == 2) thucHienXuLyViPham();
+            else System.out.println("Lựa chọn không hợp lệ!");
+        }
+    }
+
+    private static void xemTatCaViPham() {
+        System.out.println("\n--- DANH SÁCH VI PHẠM ---");
+        if (danhSachViPham.isEmpty()) {
+            System.out.println("Chưa có vi phạm nào được ghi nhận.");
+            return;
+        }
+        for (int i = 0; i < danhSachViPham.size(); i++) {
+            System.out.println((i + 1) + ". " + danhSachViPham.get(i));
+        }
+    }
+
+    private static void thucHienXuLyViPham() {
         try {
-            System.out.print("Nhập ID chi tiết phiếu: ");
-            int chiTietId = Integer.parseInt(scanner.nextLine().trim());
+            System.out.print("Nhập ID phiếu mượn: #");
+            int phieuId = Integer.parseInt(scanner.nextLine().trim());
 
-            System.out.print("Loại vi phạm (tra_muon / lam_hong): ");
-            String loai = scanner.nextLine().trim().toLowerCase();
-
-            java.sql.Date ngayTraThucTe = new java.sql.Date(System.currentTimeMillis());
-            java.sql.Date ngayHenTra = java.sql.Date.valueOf(lastNgayHenTra);
-
-            long diff = ngayTraThucTe.getTime() - ngayHenTra.getTime();
-            long soNgayTre = Math.max(0, diff / (24 * 60 * 60 * 1000));
-
-            double tienPhat = 0.0;
-
-            if (loai.equals("tra_muon")) {
-                tienPhat = soNgayTre * 5000.0;
-                System.out.println("\n→ Trả muộn **" + soNgayTre + " ngày**");
-                System.out.println("→ Tiền phạt: **" + tienPhat + " VND**");
-            } else if (loai.equals("lam_hong")) {
-                System.out.print("Nhập tiền phạt (VND): ");
-                tienPhat = Double.parseDouble(scanner.nextLine().trim());
-                System.out.println("\n→ Làm hỏng sách");
-                System.out.println("→ Tiền phạt: **" + tienPhat + " VND**");
-            } else {
-                System.out.println(" Loại vi phạm không hợp lệ!");
+            int index = listPhieuId.indexOf(phieuId);
+            if (index == -1) {
+                System.out.println("Không tìm thấy phiếu mượn #" + phieuId);
                 return;
             }
 
-            System.out.println(" Đã ghi nhận vi phạm thành công cho chi tiết phiếu #" + chiTietId);
+            String ngayHenTraStr = listNgayHenTra.get(index);
+
+            System.out.println("\nChọn loại vi phạm:");
+            System.out.println("1. Trả muộn");
+            System.out.println("2. Làm hỏng");
+            System.out.print("Chọn: ");
+            int choice = Integer.parseInt(scanner.nextLine().trim());
+
+            String loai = "";
+            double tienPhat = 0.0;
+
+            if (choice == 1) {
+                loai = "tra_muon";
+                java.sql.Date ngayTra = new java.sql.Date(System.currentTimeMillis());
+                java.sql.Date ngayHen = java.sql.Date.valueOf(ngayHenTraStr);
+                long soNgayTre = Math.max(0, (ngayTra.getTime() - ngayHen.getTime()) / (24 * 60 * 60 * 1000));
+
+                tienPhat = soNgayTre * 5000.0;
+                System.out.println("→ Trả muộn: " + soNgayTre + " ngày");
+                System.out.println("→ Tiền phạt: " + tienPhat + " VND");
+            } else if (choice == 2) {
+                loai = "lam_hong";
+                System.out.print("Nhập tiền phạt (VND): ");
+                tienPhat = Double.parseDouble(scanner.nextLine().trim());
+                System.out.println("→ Làm hỏng");
+                System.out.println("→ Tiền phạt: " + tienPhat + " VND");
+            } else {
+                System.out.println("Lựa chọn không hợp lệ!");
+                return;
+            }
+
+            String info = String.format("Phiếu #%d | Loại: %s | Phạt: %.0f VND", phieuId, loai, tienPhat);
+            danhSachViPham.add(info);
+
+            System.out.println("Đã ghi nhận vi phạm thành công cho phiếu #" + phieuId);
 
         } catch (Exception e) {
-            System.out.println(" Lỗi: " + e.getMessage());
+            System.out.println("Lỗi: " + e.getMessage());
         }
     }
 
