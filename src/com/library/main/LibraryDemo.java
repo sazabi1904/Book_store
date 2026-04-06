@@ -12,6 +12,10 @@ public class LibraryDemo {
     private static BookDAO bookDAO = new BookDAO();
     private static Member currentUser = null;
 
+    // Các đối tượng DAO dành cho chức năng của bạn
+    static ReaderDAO readerDao = new ReaderDAO();
+    static StatisticDAO statDao = new StatisticDAO();
+
     public static void main(String[] args) {
         while (true) {
             displayMenu();
@@ -63,6 +67,27 @@ public class LibraryDemo {
                         System.out.println(" Bạn không có quyền truy cập chức năng này!");
                     }
                     break;
+                case 11:
+                    if (isAdmin()) {
+                        manageReaders();
+                    } else {
+                        System.out.println(" Tài khoản không có quyền truy cập!");
+                    }
+                    break;
+                case 12:
+                    if (isAdmin()) {
+                        viewStatistics();
+                    } else {
+                        System.out.println(" Tài khoản không có quyền truy cập!");
+                    }
+                    break;
+                case 13:
+                    if (isAdmin()) {
+                        viewBorrowTracking();
+                    } else {
+                        System.out.println(" Tài khoản không có quyền truy cập!");
+                    }
+                    break;
                 case 0:
                     System.out.println("Tạm biệt!");
                     scanner.close();
@@ -91,6 +116,9 @@ public class LibraryDemo {
         System.out.println("8. LẬP PHIẾU MƯỢN SÁCH");
         System.out.println("9. XỬ LÝ TRẢ SÁCH");
         System.out.println("10. QUẢN LÝ VI PHẠM");
+        System.out.println("11. QUẢN LÝ ĐỘC GIẢ");
+        System.out.println("12. THỐNG KÊ MƯỢN SÁCH");
+        System.out.println("13. THEO DÕI MƯỢN / TRẢ");
         System.out.println("0. THOÁT");
     }
 
@@ -807,6 +835,100 @@ public class LibraryDemo {
 
         } catch (Exception e) {
             System.out.println(" Lỗi: " + e.getMessage());
+        }
+    }
+
+    // ==============================================================
+    // CÁC CHỨC NĂNG TÍCH HỢP TỪ CODE CỦA BẠN
+    // ==============================================================
+
+    private static void manageReaders() {
+        int choice = -1;
+        do {
+            System.out.println("\n--- Quản Lý Độc Giả ---");
+            System.out.println("1. Xem danh sách độc giả");
+            System.out.println("2. Thêm độc giả");
+            System.out.println("3. Cập nhật độc giả");
+            System.out.println("4. Xóa độc giả");
+            System.out.println("0. Quay lại");
+            System.out.print("Chọn: ");
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Vui lòng nhập số!");
+                continue;
+            }
+
+            switch (choice) {
+                case 1:
+                    List<Reader> readers = readerDao.getAll();
+                    System.out.println("DANH SÁCH ĐỘC GIẢ:");
+                    System.out.printf("%-5s %-25s %-15s\n", "ID", "Họ và Tên", "Số điện thoại");
+                    for (Reader r : readers) {
+                        System.out.printf("%-5d %-25s %-15s\n", r.getId(), r.getName(), r.getPhone());
+                    }
+                    break;
+                case 2:
+                    System.out.print("Nhập tên độc giả: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Nhập số điện thoại: ");
+                    String phone = scanner.nextLine();
+                    readerDao.addReader(new Reader(name, phone));
+                    break;
+                case 3:
+                    System.out.print("Nhập ID độc giả cần cập nhật: ");
+                    try {
+                        int updateId = Integer.parseInt(scanner.nextLine());
+                        System.out.print("Nhập tên mới: ");
+                        String newName = scanner.nextLine();
+                        System.out.print("Nhập số điện thoại mới: ");
+                        String newPhone = scanner.nextLine();
+                        readerDao.updateReader(new Reader(updateId, newName, newPhone));
+                    } catch (NumberFormatException e) {
+                        System.out.println("ID phải là số!");
+                    }
+                    break;
+                case 4:
+                    System.out.print("Nhập ID độc giả cần xóa: ");
+                    try {
+                        int deleteId = Integer.parseInt(scanner.nextLine());
+                        readerDao.deleteReader(deleteId);
+                    } catch (NumberFormatException e) {
+                        System.out.println("ID phải là số!");
+                    }
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Lựa chọn không hợp lệ!");
+            }
+        } while (choice != 0);
+    }
+
+    private static void viewStatistics() {
+        System.out.println("\n--- Thống Kê Mượn Sách ---");
+        System.out.println("SÁCH MƯỢN NHIỀU NHẤT:");
+        List<BookStatistic> stats = statDao.getTopBorrowedBooks();
+        System.out.printf("%-40s %-15s\n", "Tên Sách", "Số Lần Mượn");
+        for (BookStatistic s : stats) {
+            System.out.printf("%-40s %-15d\n", s.getTitle(), s.getBorrowCount());
+        }
+
+        System.out.println("\nTÌNH TRẠNG KHO SÁCH:");
+        List<String> inventory = statDao.getInventoryStatus();
+        for (String status : inventory) {
+            System.out.println(status);
+        }
+    }
+
+    private static void viewBorrowTracking() {
+        System.out.println("\n--- Theo Dõi Mượn Trả ---");
+        System.out.println("DANH SÁCH ĐANG MƯỢN / QUÁ HẠN:");
+        List<BorrowedBook> overdueBooks = statDao.getOverdueBooks();
+        System.out.printf("%-25s %-40s %-15s %-15s\n", "Người Mượn", "Tên Sách", "Hạn Trả", "Tình Trạng");
+        for (BorrowedBook b : overdueBooks) {
+            System.out.printf("%-25s %-40s %-15s %-15s\n", b.getReaderName(), b.getBookTitle(), b.getReturnDate(),
+                    b.getStatus());
         }
     }
 }
