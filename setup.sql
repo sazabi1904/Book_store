@@ -1,4 +1,5 @@
--- ==================== TẠO DATABASE library_db ====================
+-- ==================== TẠO LẠI DATABASE library_db ====================
+DROP DATABASE IF EXISTS library_db;
 
 CREATE DATABASE library_db 
 CHARACTER SET utf8mb4 
@@ -6,7 +7,7 @@ COLLATE utf8mb4_unicode_ci;
 
 USE library_db;
 
--- 1. Bảng members (có cột role)
+-- 1. Bảng members
 CREATE TABLE members (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -19,7 +20,7 @@ CREATE TABLE members (
     email VARCHAR(100),
     card_id VARCHAR(50) UNIQUE NOT NULL,
     role ENUM('ADMIN', 'READER') DEFAULT 'READER',
-    login_count INT DEFAULT 0,
+    login_count INT DEFAULT 0,           -- Thêm cột này để tránh lỗi login_count
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -42,7 +43,7 @@ CREATE TABLE books (
 INSERT INTO members (username, password, full_name, role, card_id)
 VALUES ('admin', '123', 'Quản trị viên hệ thống', 'ADMIN', 'ADMIN001');
 
--- Thêm thành viên test
+-- Thêm thành viên Reader
 INSERT INTO members (username, password, full_name, birth_date, gender, address, phone, email, card_id, role)
 VALUES 
 ('reader1', '123456', 'Nguyễn Văn A', '2002-05-15', 'Nam', 'Hà Nội', '0987654321', 'vana@gmail.com', 'TV001', 'READER'),
@@ -66,10 +67,15 @@ VALUES
 ('B010', 'Sapiens: Lược sử loài người', 'Yuval Noah Harari', 'Khoa học', 2014, 2, 'available');
 
 -- ==================== KIỂM TRA ====================
-SELECT ' Database library_db đã được tạo lại thành công!' AS ThongBao;
+SELECT '✅ Database library_db đã được tạo lại thành công!' AS ThongBao;
 
 SELECT 'Số thành viên:' AS Info, COUNT(*) FROM members;
-SELECT 'Số sách:' AS Info, COUNT(*) FROM books;
+SELECT 'Số sách:'      AS Info, COUNT(*) FROM books;
 
-SELECT id, username, full_name, card_id, role FROM members ORDER BY role DESC;
-SELECT bookId, title, author, quantity, trangThai FROM books LIMIT 5;
+SELECT id, username, full_name, card_id, role, login_count 
+FROM members 
+ORDER BY role DESC, id;
+
+SELECT bookId, title, author, quantity, trangThai 
+FROM books 
+LIMIT 5;
