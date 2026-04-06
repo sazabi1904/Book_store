@@ -100,7 +100,7 @@ public class LibraryDemo {
 
     private static void displayMenu() {
         System.out.println("\n===== HỆ THỐNG THƯ VIỆN =====");
-        
+
         if (currentUser != null) {
             String roleText = isAdmin() ? "ADMIN" : "READER";
             System.out.println("Xin chào: " + currentUser.getFullName() + " (" + roleText + ")");
@@ -735,8 +735,7 @@ public class LibraryDemo {
             System.out.println("   Thành viên     : " + currentUser.getFullName());
             System.out.println("   Ngày hẹn trả   : " + ngayHenTraStr);
             System.out.println("   Số sách mượn   : " + soLuong + " cuốn");
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(" Lỗi: " + e.getMessage());
         }
     }
@@ -767,10 +766,14 @@ public class LibraryDemo {
                 return;
             }
 
-            if (sub == 0) return;
-            if (sub == 1) xemTatCaPhieuMuon();
-            else if (sub == 2) thucHienTraSach();
-            else System.out.println("Lựa chọn không hợp lệ!");
+            if (sub == 0)
+                return;
+            if (sub == 1)
+                xemTatCaPhieuMuon();
+            else if (sub == 2)
+                thucHienTraSach();
+            else
+                System.out.println("Lựa chọn không hợp lệ!");
         }
     }
 
@@ -817,8 +820,8 @@ public class LibraryDemo {
 
                 System.out.print("\nGhi nhận vi phạm trả muộn? (1: Có, 0: Không): ");
                 if (Integer.parseInt(scanner.nextLine().trim()) == 1) {
-                    String info = String.format("Phiếu #%d | Trả muộn %d ngày | Ngày trả: %s", 
-                        phieuId, soNgayTre, ngayTraThucTe);
+                    String info = String.format("Phiếu #%d | Trả muộn %d ngày | Ngày trả: %s",
+                            phieuId, soNgayTre, ngayTraThucTe);
                     danhSachViPham.add(info);
                     System.out.println("✓ Đã ghi nhận vi phạm trả muộn!");
                 }
@@ -854,10 +857,14 @@ public class LibraryDemo {
                 continue;
             }
 
-            if (sub == 0) return;
-            if (sub == 1) xemTatCaViPham();
-            else if (sub == 2) thucHienXuLyViPham();
-            else System.out.println("Lựa chọn không hợp lệ!");
+            if (sub == 0)
+                return;
+            if (sub == 1)
+                xemTatCaViPham();
+            else if (sub == 2)
+                thucHienXuLyViPham();
+            else
+                System.out.println("Lựa chọn không hợp lệ!");
         }
     }
 
@@ -923,10 +930,6 @@ public class LibraryDemo {
             System.out.println("Lỗi: " + e.getMessage());
         }
     }
-
-    // ==============================================================
-    // CÁC CHỨC NĂNG TÍCH HỢP TỪ CODE CỦA BẠN
-    // ==============================================================
 
     private static void manageReaders() {
         int choice = -1;
