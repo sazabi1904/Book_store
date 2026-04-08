@@ -73,13 +73,14 @@ public class BookDAO {
 
     public List<Book> searchBooks(String keyword) throws SQLException {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT * FROM books WHERE id LIKE ? OR title LIKE ? OR author LIKE ?";
+        String sql = "SELECT * FROM books WHERE id LIKE ? OR title LIKE ? OR author LIKE ? OR category LIKE ?";
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             String searchPattern = "%" + keyword + "%";
             pstmt.setString(1, searchPattern);
             pstmt.setString(2, searchPattern);
             pstmt.setString(3, searchPattern);
+            pstmt.setString(4, searchPattern);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     books.add(new Book(
@@ -128,4 +129,33 @@ public class BookDAO {
             pstmt.executeUpdate();
         }
     }
+
+    // PHẦN THÊM VÀO: Lấy danh sách model phân loại sách
+    public List<com.library.model.BookCategoryModel> getBooksCategorized() throws SQLException {
+        List<com.library.model.BookCategoryModel> categoryModels = new ArrayList<>();
+        String sql = "SELECT category, title FROM books ORDER BY category, title";
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            String currentCategory = null;
+            com.library.model.BookCategoryModel currentModel = null;
+
+            while (rs.next()) {
+                String cat = rs.getString("category");
+                String title = rs.getString("title");
+
+                if (currentCategory == null || !currentCategory.equals(cat)) {
+                    currentCategory = cat;
+                    currentModel = new com.library.model.BookCategoryModel(cat);
+                    categoryModels.add(currentModel);
+                }
+                if (currentModel != null) {
+                    currentModel.addBookTitle(title);
+                }
+            }
+        }
+        return categoryModels;
+    }
+    // ========================================================
 }
