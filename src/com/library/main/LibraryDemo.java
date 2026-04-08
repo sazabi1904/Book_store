@@ -11,8 +11,6 @@ public class LibraryDemo {
     private static MemberDAO memberDAO = new MemberDAO();
     private static BookDAO bookDAO = new BookDAO();
     private static Member currentUser = null;
-
-    // Các đối tượng DAO dành cho chức năng của bạn
     static ReaderDAO readerDao = new ReaderDAO();
     static StatisticDAO statDao = new StatisticDAO();
 
@@ -449,6 +447,10 @@ public class LibraryDemo {
                 try {
                     bookDAO.addBook(new Book(id, title, author, cat, year, qty));
                     System.out.println("Thêm sách thành công!");
+
+                    // PHẦN THÊM VÀO: Hiện bảng phân loại sách (chỉ hiện tên sách)
+                    displayBookCategories();
+                    // ===========================================
                 } catch (SQLException e) {
                     System.out.println("Lỗi: " + e.getMessage());
                 }
@@ -637,7 +639,7 @@ public class LibraryDemo {
 
         while (true) {
             System.out.println("\n--- TÌM KIẾM SÁCH ---");
-            System.out.println("1. Nhập từ khóa tìm kiếm (Mã/Tiêu đề/Tác giả)");
+            System.out.println("1. Nhập từ khóa tìm kiếm (Mã/Tiêu đề/Tác giả/Thể loại)");
             System.out.println("2. Quay lại");
             System.out.print("Chọn: ");
             String choice = scanner.nextLine();
@@ -692,13 +694,43 @@ public class LibraryDemo {
     }
 
     private static void displayBooks(List<Book> books) {
-        System.out.printf("%-10s | %-30s | %-20s | %-5s\n", "Mã", "Tiêu đề", "Tác giả", "SL");
-        System.out.println("-------------------------------------------------------------------------");
+        System.out.printf("%-10s | %-30s | %-20s | %-15s | %-5s\n", "Mã", "Tiêu đề", "Tác giả", "Thể loại", "SL");
+        System.out.println(
+                "---------------------------------------------------------------------------------------------");
         for (Book b : books) {
-            System.out.printf("%-10s | %-30s | %-20s | %-5d\n", b.getBookId(), b.getTitle(), b.getAuthor(),
+            System.out.printf("%-10s | %-30s | %-20s | %-15s | %-5d\n", b.getBookId(), b.getTitle(), b.getAuthor(),
+                    b.getCategory(),
                     b.getQuantity());
         }
     }
+
+    // PHẦN THÊM VÀO: Hàm hiển thị bảng thể loại
+    private static void displayBookCategories() {
+        try {
+            List<BookCategoryModel> categories = bookDAO.getBooksCategorized();
+            if (categories.isEmpty())
+                return;
+
+            System.out.println("\n--- BẢNG THỂ LOẠI SÁCH ---");
+            System.out.printf("%-20s | %-50s\n", "Thể loại", "Tên sách");
+            System.out.println("-------------------------------------------------------------------------");
+            for (BookCategoryModel catModel : categories) {
+                String catName = catModel.getCategoryName();
+                List<String> titles = catModel.getBookTitles();
+                for (int i = 0; i < titles.size(); i++) {
+                    if (i == 0) {
+                        System.out.printf("%-20s | %-50s\n", catName, titles.get(i));
+                    } else {
+                        System.out.printf("%-20s | %-50s\n", "", titles.get(i));
+                    }
+                }
+                System.out.println("-".repeat(73));
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi hiển thị bảng thể loại: " + e.getMessage());
+        }
+    }
+    // ========================================================
 
     private static java.util.List<Integer> listPhieuId = new java.util.ArrayList<>();
     private static java.util.List<String> listNgayHenTra = new java.util.ArrayList<>();
