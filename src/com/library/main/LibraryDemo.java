@@ -13,8 +13,8 @@ public class LibraryDemo {
     private static Member currentUser = null;
 
     // Các đối tượng DAO dành cho chức năng của bạn
-    static ReaderDAO readerDao = new ReaderDAO();
     static StatisticDAO statDao = new StatisticDAO();
+    private static DeXuatDAO deXuatDao = new DeXuatDAO();
 
     public static void main(String[] args) {
         while (true) {
@@ -68,11 +68,7 @@ public class LibraryDemo {
                     }
                     break;
                 case 11:
-                    if (isAdmin()) {
-                        manageReaders();
-                    } else {
-                        System.out.println("Tài khoản không có quyền truy cập!");
-                    }
+                    deXuatSach();
                     break;
                 case 12:
                     if (isAdmin()) {
@@ -116,7 +112,7 @@ public class LibraryDemo {
         System.out.println("8. TẠO PHIẾU MƯỢN SÁCH");
         System.out.println("9. XỬ LÝ TRẢ SÁCH");
         System.out.println("10. QUẢN LÝ VI PHẠM");
-        System.out.println("11. QUẢN LÝ ĐỘC GIẢ");
+        System.out.println("11. ĐỀ XUẤT SÁCH MỚI");
         System.out.println("12. THỐNG KÊ MƯỢN SÁCH");
         System.out.println("13. THEO DÕI MƯỢN / TRẢ");
         System.out.println("0. THOÁT");
@@ -931,67 +927,65 @@ public class LibraryDemo {
         }
     }
 
-    private static void manageReaders() {
-        int choice = -1;
-        do {
-            System.out.println("\n--- Quản Lý Độc Giả ---");
-            System.out.println("1. Xem danh sách độc giả");
-            System.out.println("2. Thêm độc giả");
-            System.out.println("3. Cập nhật độc giả");
-            System.out.println("4. Xóa độc giả");
-            System.out.println("0. Quay lại");
-            System.out.print("Chọn: ");
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Vui lòng nhập số!");
-                continue;
-            }
+    private static void deXuatSach() {
+        if (currentUser == null) {
+            System.out.println("Bạn cần đăng nhập để sử dụng tính năng này!");
+            return;
+        }
 
-            switch (choice) {
-                case 1:
-                    List<Reader> readers = readerDao.getAll();
-                    System.out.println("DANH SÁCH ĐỘC GIẢ:");
-                    System.out.printf("%-5s %-25s %-15s\n", "ID", "Họ và Tên", "Số điện thoại");
-                    for (Reader r : readers) {
-                        System.out.printf("%-5d %-25s %-15s\n", r.getId(), r.getName(), r.getPhone());
+        if (isAdmin()) {
+            while (true) {
+                System.out.println("\n--- QUẢN LÝ ĐỀ XUẤT SÁCH MỚI ---");
+                try {
+                    java.util.List<com.library.model.DeXuat> list = deXuatDao.getAllDeXuat();
+                    if (list.isEmpty()) {
+                        System.out.println("Hiện chưa có đề xuất nào từ độc giả.");
+                    } else {
+                        System.out.printf("%-5s | %-15s | %-30s | %-20s | %-15s\n", "ID", "Độc giả", "Tên Sách",
+                                "Tác Giả", "Trạng Thái");
+                        System.out.println("-".repeat(95));
+                        for (com.library.model.DeXuat d : list) {
+                            System.out.printf("%-5d | %-15s | %-30s | %-20s | %-15s\n",
+                                    d.getId(), d.getMemberName(), d.getTenSach(),
+                                    (d.getTacGia() == null ? "N/A" : d.getTacGia()), d.getTrangThai());
+                        }
                     }
-                    break;
-                case 2:
-                    System.out.print("Nhập tên độc giả: ");
-                    String name = scanner.nextLine();
-                    System.out.print("Nhập số điện thoại: ");
-                    String phone = scanner.nextLine();
-                    readerDao.addReader(new Reader(name, phone));
-                    break;
-                case 3:
-                    System.out.print("Nhập ID độc giả cần cập nhật: ");
-                    try {
-                        int updateId = Integer.parseInt(scanner.nextLine());
-                        System.out.print("Nhập tên mới: ");
-                        String newName = scanner.nextLine();
-                        System.out.print("Nhập số điện thoại mới: ");
-                        String newPhone = scanner.nextLine();
-                        readerDao.updateReader(new Reader(updateId, newName, newPhone));
-                    } catch (NumberFormatException e) {
-                        System.out.println("ID phải là số!");
+                    System.out.println("\n1. Xóa toàn bộ đề xuất");
+                    System.out.println("0. Quay lại");
+                    System.out.print("Chọn: ");
+                    String choice = scanner.nextLine();
+                    if (choice.equals("1")) {
+                        deXuatDao.clearAllDeXuat();
+                        System.out.println("Đã xóa toàn bộ danh sách đề xuất trong CSDL.");
+                    } else if (choice.equals("0")) {
+                        break;
+                    } else {
+                        System.out.println("Lựa chọn không hợp lệ!");
                     }
-                    break;
-                case 4:
-                    System.out.print("Nhập ID độc giả cần xóa: ");
-                    try {
-                        int deleteId = Integer.parseInt(scanner.nextLine());
-                        readerDao.deleteReader(deleteId);
-                    } catch (NumberFormatException e) {
-                        System.out.println("ID phải là số!");
-                    }
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Lựa chọn không hợp lệ!");
+                } catch (java.sql.SQLException e) {
+                    System.out.println("Lỗi truy xuất CSDL: " + e.getMessage());
+                }
             }
-        } while (choice != 0);
+        } else {
+            System.out.println("\n--- GỬI ĐỀ XUẤT SÁCH MỚI ---");
+            System.out.print("Nhập tên sách bạn muốn thư viện bổ sung (hoặc Enter để Hủy): ");
+            String tenSach = scanner.nextLine();
+            if (tenSach.trim().isEmpty()) {
+                System.out.println("Đã hủy thao tác.");
+                return;
+            }
+            System.out.print("Nhập tên tác giả (Có thể để trống): ");
+            String tacGia = scanner.nextLine();
+
+            try {
+                // Assuming currentUser is an instance of Member from DB with properly populated
+                // ID field!
+                deXuatDao.addDeXuat(currentUser.getId(), tenSach, tacGia);
+                System.out.println("Cảm ơn! Đề xuất của bạn đã được ghi nhận vào CSDL.");
+            } catch (java.sql.SQLException e) {
+                System.out.println("Lỗi CSDL khi lưu đề xuất: " + e.getMessage());
+            }
+        }
     }
 
     private static void viewStatistics() {
