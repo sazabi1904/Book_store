@@ -96,13 +96,12 @@ public class BookDAO {
         return books;
     }
 
-    // Phương thức này để lấy Book theo bookId
+    // Phương thức này để lấy Book theo mã sách (id)
     public Book getByBookId(String bookId) throws SQLException {
-        String sql = "SELECT * FROM books WHERE id = ? OR bookId = ?";
+        String sql = "SELECT * FROM books WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, bookId);
-            pstmt.setString(2, bookId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return new Book(
@@ -118,14 +117,13 @@ public class BookDAO {
         return null;
     }
 
-    // Phương thức cập nhật trạng thái sách (available / borrowed)
-    public void updateTrangThai(String bookId, String trangThai) throws SQLException {
-        String sql = "UPDATE books SET trangThai = ? WHERE id = ? OR bookId = ?";
+
+
+    public void decreaseQuantity(String bookId) throws SQLException {
+        String sql = "UPDATE books SET quantity = GREATEST(quantity - 1, 0) WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, trangThai);
-            pstmt.setString(2, bookId);
-            pstmt.setString(3, bookId);
+            pstmt.setString(1, bookId);
             pstmt.executeUpdate();
         }
     }
