@@ -1,6 +1,17 @@
 -- Script tạo Database và Bảng cho Hệ thống Thư viện
-CREATE DATABASE IF NOT EXISTS library_db;
+-- Lưu ý: nếu bạn đã chạy script cũ, hãy xóa database cũ và chạy lại để đồng bộ hoàn toàn.
+DROP DATABASE IF EXISTS library_db;
+CREATE DATABASE library_db;
 USE library_db;
+
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS vi_pham;
+DROP TABLE IF EXISTS chi_tiet_phieu_muon;
+DROP TABLE IF EXISTS phieu_muon;
+DROP TABLE IF EXISTS de_xuat;
+DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS members;
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- 1. Bảng members
 CREATE TABLE IF NOT EXISTS members (
@@ -37,6 +48,7 @@ CREATE TABLE IF NOT EXISTS phieu_muon (
     member_id INT NOT NULL,
     ngay_muon DATE NOT NULL,
     ngay_hen_tra DATE NOT NULL,
+    so_luong_sach INT NOT NULL DEFAULT 0,
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
 );
 
@@ -75,14 +87,6 @@ CREATE TABLE IF NOT EXISTS de_xuat (
 
 -- HIỆU CHỈNH DỮ LIỆU ĐỂ KIỂM THỬ (MOCK DATA)
 
--- Xóa dữ liệu cũ (nếu có để reset khi test)
-DELETE FROM vi_pham;
-DELETE FROM chi_tiet_phieu_muon;
-DELETE FROM phieu_muon;
-DELETE FROM de_xuat;
-DELETE FROM books;
-DELETE FROM members;
-
 -- Thêm Admin
 INSERT INTO members (id, username, password, full_name, card_id, role) 
 VALUES (1, 'admin', '123', 'Quản trị viên hệ thống', 'ADMIN-001', 'ADMIN');
@@ -99,12 +103,12 @@ VALUES ('B001', 'Lập trình Java', 'James Gosling', 'Công nghệ thông tin',
        ('B003', 'Sách Đắc Nhân Tâm', 'Dale Carnegie', 'Tâm lý', 1936, 15, 'available');
 
 -- Thêm Phiếu Mượn cho member 2
-INSERT INTO phieu_muon (id, member_id, ngay_muon, ngay_hen_tra) 
-VALUES (1, 2, '2023-10-01', '2023-10-15');
+INSERT INTO phieu_muon (id, member_id, ngay_muon, ngay_hen_tra, so_luong_sach) 
+VALUES (1, 2, '2023-10-01', '2023-10-15', 2);
 
 -- Thêm Chi Tiết Phiếu Mượn
 INSERT INTO chi_tiet_phieu_muon (id, phieu_muon_id, book_id, ngay_tra_thuc_te, trang_thai) 
-VALUES (1, 1, 'B001', NULL, 'dang_muon'),
+VALUES (1, 1, 'B001', 'dang_muon'),
        (2, 1, 'B002', '2023-10-20', 'da_tra'); -- Sách này đã trả muộn (so với hẹn trả 15/10)
 
 -- Thêm Vi Phạm (Cho chi tiết phiếu mượn trả muộn của sách B002)
