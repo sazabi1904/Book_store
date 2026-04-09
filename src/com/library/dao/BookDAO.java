@@ -135,12 +135,10 @@ public class BookDAO {
         List<com.library.model.BookCategoryModel> categoryModels = new ArrayList<>();
         String sql = "SELECT category, title FROM books ORDER BY category, title";
         try (Connection conn = DBConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             String currentCategory = null;
             com.library.model.BookCategoryModel currentModel = null;
-
             while (rs.next()) {
                 String cat = rs.getString("category");
                 String title = rs.getString("title");

@@ -96,7 +96,22 @@ VALUES (2, 'nguyenvana', '123', 'Nguyễn Văn A', '2000-01-01', 'Nam', 'Hà N�
 INSERT INTO books (id, title, author, category, year, quantity, trangThai) 
 VALUES ('B001', 'Lập trình Java', 'James Gosling', 'Công nghệ thông tin', 2020, 10, 'available'),
        ('B002', 'Cấu trúc dữ liệu và giải thuật', 'Nguyễn Văn C', 'Giáo trình', 2018, 5, 'available'),
-       ('B003', 'Sách Đắc Nhân Tâm', 'Dale Carnegie', 'Tâm lý', 1936, 15, 'available');
+       ('B003', 'Sách Đắc Nhân Tâm', 'Dale Carnegie', 'Tâm lý', 1936, 15, 'available'),
+       ('B004', 'One Piece Vol.1', 'Eiichiro Oda', 'Manga', 1997, 20, 'available'),
+        ('B005', 'Naruto Vol.1', 'Masashi Kishimoto', 'Manga', 1999, 18, 'available'),
+        ('B006', 'Attack on Titan Vol.1', 'Hajime Isayama', 'Manga', 2009, 15, 'available'),
+        ('B007', 'Death Note Vol.1', 'Tsugumi Ohba', 'Manga', 2003, 12, 'available'),
+        ('B008', 'Dragon Ball Vol.1', 'Akira Toriyama', 'Manga', 1984, 14, 'available'),
+        ('B009', 'Doraemon Vol.1', 'Fujiko F. Fujio', 'Manga', 1969, 25, 'available'),
+        ('B010', 'Tokyo Revengers Vol.1', 'Ken Wakui', 'Manga', 2017, 10, 'available'),
+        ('B011', 'Jujutsu Kaisen Vol.1', 'Gege Akutami', 'Manga', 2018, 16, 'available'),
+        ('B012', 'Batman: Year One', 'Frank Miller', 'Comic', 1987, 8, 'available'),
+        ('B013', 'Spider-Man: Blue', 'Jeph Loeb', 'Comic', 2002, 7, 'available'),
+        ('B014', 'The Avengers Vol.1', 'Stan Lee', 'Comic', 1963, 9, 'available'),
+        ('B015', 'Watchmen', 'Alan Moore', 'Comic', 1986, 6, 'available'),
+        ('B016', 'Solo Leveling Vol.1', 'Chugong', 'Manhwa', 2018, 20, 'available'),
+        ('B017', 'Tower of God Vol.1', 'SIU', 'Manhwa', 2010, 12, 'available'),
+        ('B018', 'The Beginning After The End Vol.1', 'TurtleMe', 'Manhwa', 2018, 11, 'available');
 
 -- Thêm Phiếu Mượn cho member 2
 INSERT INTO phieu_muon (id, member_id, ngay_muon, ngay_hen_tra) 

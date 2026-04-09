@@ -3,7 +3,6 @@ package com.library.model;
 import java.util.ArrayList;
 import java.util.List;
 
-// PHẦN THÊM VÀO: Model để phân loại sách theo thể loại
 public class BookCategoryModel {
     private String categoryName;
     private List<String> bookTitles;
